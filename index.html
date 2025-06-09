@@ -268,7 +268,7 @@
                   textElement.innerHTML = `
                                           Truly generalist policies require perceptual ability <b>beyond</b> the object distributions <b>encountered during training or fine-tuning</b>.
                                           <br><br>
-                                          In SimplerEnv, which assume the fine-tuning dataset is BridgeV2, all manipulation tasks are <code>Put {Source} on {Target}</code>. Therefore, We introduce <b>four</b> categories of <b>out-of-distribution objects</b> that resemble original objects in affordances/grasping difficulty.\
+                                          In SimplerEnv, which assume the fine-tuning dataset is BridgeV2, all manipulation tasks are <code>Put {Source} on {Target}</code>. Therefore, We introduce <b>four</b> categories of <b>out-of-distribution objects</b> that resemble original objects in affordances/grasping difficulty.
                                           <br>
                                           <br><b>OOD Source:</b> Source object not present in BridgeV2, but target object is.
                                           <br><b>OOD Target:</b> Target object not present in BridgeV2, but source object is.
@@ -279,21 +279,23 @@
                   // imageElement.alt = "Image 1";
               } else if (buttonNumber === 2) {
                   textElement.innerHTML = `
-                                           <br><b>(1) High Gradient Points:</b> By design, in 3D Gaussian Splatting training, points with high gradient indicate rapid changes in spatial/geometric features and larger discrepancies between the rendering and the ground truth image, which means a need for further optimization. \
-                                           Therefore, we select a few clusters of points with high gradients as seen in <i>Rabbit 3</i>.\
-                                           <br><br><b>2.2 Common-Sense Reranking:</b> \
-                                           <br><b>(2) Semantic Grounding:</b> In the first step, along with classification, we also asked GPT-4o to give us a list of parts of this object. Using zero-shot open-vocabulary part segmentation model such as <a href=\"https://arxiv.org/abs/2212.01558\">PartSLIP</a>, we can ground such semantic information to our reconstruction, as can be seen in <i>Rabbit 2</i>.\
-                                           <br><b>(3) Commen-Sense Ranking:</b> We then ask GPT-4o which part should have priority when it comes to touching.  \
-                                           Then, without violating the geometric ranking, we rank the points within the same cluster based on their part priority. This ensures that even if the part segmentation fails, the robot will still have points to touch, as seen in <i>Rabbit 4</i>`;
+                                          To probe whether VLAs inherit the advanced <b>language generalization</b> abilities of their underlying VLMs, we augment the original SimplerEnv instructions with <b>three</b> types of complex <b>linguistic variations</b>.
+                                          <br>
+                                          <br><b>Language Action:</b> Paraphrase verbs to be compositional and less frequent than in BridgeV2. (e.g., <code>Put {Source} on {Target}</code> &#8594; <code>Pick up {Source} and lay on top of {Target}</code>).
+                                          <br><b>Language Negation:</b> Add negation such as <code>not, don't</code> to irrelevant objects. (e.g., <code>Put {Source} on {Target}</code> &#8594; <code> Put {Source} on {Target}, not {Irrelevant}</code>).
+                                          <br><b>Language Appearance:</b> Replace object with descriptive words. (e.g., <code>Put eggplant on {Target}</code> &#8594; <code>Put the purple object on {Source}</code>).`;
                   imageElement.classList.remove('hidden');
                   imageElement.src = "./static/images/Method_2.png";
                   // imageElement.alt = "Image 2";
               } else if (buttonNumber === 3) {
-                  textElement.innerHTML = "<b>3.1 Touch Transform:</b> \
-                                           <br><b>(1) Touch Patch Transformation:</b> Based on photometric stereo, we can acquire depth and normal of the touch spot, which gives us a dense point cloud. \
-                                           <br><br><b>3.2 Anchor Gaussian Optimization:</b> \
-                                           <br><b>(2) Anchor Gaussian Points:</b> The dense point cloud are added as anchor Gaussian points.\
-                                           <br><b>(3) Optimization:</b> We then apply Gaussian normal supervision to further optimize the 3D Gaussians.";
+                  textElement.innerHTML = `
+                                          To be useful in the real world, a generalist policy should be able to operate in <b>visually clustered</b> environments and possess <b>commonsense</b>.
+                                          <br><br>
+                                          SimplerEnv focuses on minimalist scenes with no semantic ambiguity. We therefore add <b> three </b> types of advanced tasks that require visual-language thinking and commonsense.
+                                          <br>
+                                          <br><b>Object Distraction:</b> Introduce objects not relevant to the task.
+                                          <br><b>Commonsense:</b> Modify instructions to require commonsense and reasoning (e.g., <code>Put carrot on {Target}</code> &#8594; <code> Put the vegetable that rabbits like on {Target}</code>).
+                                          <br><b>Commonsense + Object Distraction:</b> Introduce distractor objects that needs commonsense to distinguish (e.g., Introduce an orange object for task <code>Put orange juice on {Target}</code>).`;
                   imageElement.classList.add('hidden');
                                            // imageElement.src = "image3.jpg";
                   // imageElement.alt = "Image 3";
