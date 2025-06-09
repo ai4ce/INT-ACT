@@ -86,11 +86,11 @@
             More Research
           </a>
           <div class="navbar-dropdown">
-            <a class="navbar-item" href="https://ai4ce.github.io/DeepExplorer/">
-              DeepExplorer
+            <a class="navbar-item" href="https://ai4ce.github.io/SeeDo/">
+              SeeDo
             </a>
-            <a class="navbar-item" href="https://ai4ce.github.io/EgoPAT3Dv2/">
-              EgoPAT3Dv2
+            <a class="navbar-item" href="https://ai4ce.github.io/FusionSense/">
+              FusionSense
             </a>
           </div>
         </div>
@@ -159,7 +159,7 @@
                </a> -->
              <!-- </span> -->
               <!-- Video Link. -->
-              <span class="link-block">
+              <!-- <span class="link-block">
                 <a href="https://youtu.be/thC0PeAQxe0"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
@@ -167,10 +167,10 @@
                   </span>
                   <span>Video</span>
                 </a>
-              </span>
+              </span> -->
               <!-- Code Link. -->
               <span class="link-block">
-                <a href="https://github.com/ai4ce/FusionSense"
+                <a href="https://github.com/ai4ce/INT-ACT"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="fab fa-github"></i>
@@ -207,7 +207,7 @@
         <p style="font-size: 20px; background-color: #8b00e13b;">
           1. <b>INT-ACT</b>: <b>probing suite</b> to evaluate the generalization capability of robotic VLAs.
           <br>
-          2. Benchmarking SOTA models to understand their <b>generalization boundaries</b>.
+          2. Benchmarking SOTA VLAs to understand their <b>generalization boundaries</b>.
         </p>
       </div>
     </div>
@@ -217,7 +217,7 @@
 <hr>
 
 
-<!-- Method Overview -->
+<!-- Categories -->
 <section class="section">
   <div class="container is-max-desktop">
     <div class="columns is-centered ">
@@ -225,17 +225,28 @@
         <h2 class="title is-3 has-text-centered">INT-ACT Categories</h2>
         <center>
           <!-- This image is always visible  -->
+          <p>
+            INT-ACT is a probing suite to evaluate the generalization capability of robotic VLAs. 
+            It consists of <b>three</b> categories of tasks that probe the generalization boundaries of VLAs.
+            <br>
+            <br>
+            <b>Object Diversity:</b> Ability to handle out-of-distribution objects.
+            <br>
+            <b>Language Complexity:</b> Ability to understand complex language instructions.
+            <br>
+            <b>Vision-Language Thinking:</b> Ability to perform commonsense reasoning and visual-language thinking.
+          </p>
           <div id="overview">
-            <img src="./static/images/task_distribution.svg" style="width: 45vw; min-width: 330px;" alt="Overview Image"> 
+            <img src="./static/images/task_distribution.svg" style="width: 40vw; min-width: 330px;" alt="Overview Image"> 
           </div>
 
           <!-- Here, the changeContent's parameter is just the number of the button. Has no intrinsic association with the content -->
-          <button id="method_button1" class="btn" onclick="changeContent(1)">Object Diversity</button>
-          <button id="method_button2" class="btn" onclick="changeContent(2)">Language Complexity</button>
-          <button id="method_button3" class="btn" onclick="changeContent(3)">Vision-Language Thinking</button>
+          <button id="intact_button1" class="btn" onclick="cateChangeContent(1)">Object Diversity</button>
+          <button id="intact_button2" class="btn" onclick="cateChangeContent(2)">Language Complexity</button>
+          <button id="intact_button3" class="btn" onclick="cateChangeContent(3)">Vision-Language Thinking</button>
 
           <div class="content has-text-justified">
-            <p id="text-content">
+            <p id="cate-text-content">
               Truly generalist policies require perceptual ability <b>beyond</b> the object distributions <b>encountered during training or fine-tuning</b>. 
               <br><br>
               In SimplerEnv, which assume the fine-tuning dataset is BridgeV2, all manipulation tasks are <code>Put {Source} on {Target}</code>. Therefore, We introduce <b>four</b> categories of <b>out-of-distribution objects</b> that resemble original objects in affordances/grasping difficulty.
@@ -246,7 +257,94 @@
               <br><b>OOD Relation:</b> Relation between objects is different from the training data. For example, if the training data has <code>Put {Source} on {Target}</code>, then the OOD relation can be <code>Put {Target} on {Source}</code>.
             </p>
             <center>
-              <img id="image-content" src="./static/images/Method_1.png" style="width: 45vw; min-width: 330px;" />
+              <img id="cate-image-content" src="./static/images/object_vision_example.svg" style="width: 62vw;" />
+            </center>
+          </div>
+        </center>
+
+        <script>
+          document.getElementById('intact_button1').classList.add('active');
+          function cateChangeContent(buttonNumber) {
+              const cateTextElement = document.getElementById('cate-text-content');
+              const cateImageElement = document.getElementById('cate-image-content');
+              
+              document.getElementById('intact_button1').classList.remove('active');
+              document.getElementById('intact_button2').classList.remove('active');
+              document.getElementById('intact_button3').classList.remove('active');
+
+              // Add 'active' class to the clicked button so that it will have a different color when its content is present
+              document.getElementById('intact_button' + buttonNumber).classList.add('active');
+
+              if (buttonNumber === 1) {
+                  cateTextElement.innerHTML = `
+                                          Truly generalist policies require perceptual ability <b>beyond</b> the object distributions <b>encountered during training or fine-tuning</b>.
+                                          <br><br>
+                                          In SimplerEnv, which assume the fine-tuning dataset is BridgeV2, all manipulation tasks are <code>Put {Source} on {Target}</code>. Therefore, We introduce <b>four</b> categories of <b>out-of-distribution objects</b> that resemble original objects in affordances/grasping difficulty.
+                                          <br>
+                                          <br><b>OOD Source:</b> Source object not present in BridgeV2, but target object is.
+                                          <br><b>OOD Target:</b> Target object not present in BridgeV2, but source object is.
+                                          <br><b>OOD Source + Target:</b> Both source and target objects are not present in BridgeV2.
+                                          <br><b>OOD Relation:</b> Relation between objects is different from the training data. For example, if the training data has <code>Put {Source} on {Target}</code>, then the OOD relation can be <code>Put {Target} on {Source}</code>.`;
+                  cateImageElement.classList.remove('hidden');
+                  cateImageElement.src = "./static/images/object_vision_example.svg";
+                  cateImageElement.style.width  = "62vw";
+                  cateImageElement.style.height = "auto";
+                  // imageElement.alt = "Image 1";
+              } else if (buttonNumber === 2) {
+                  cateTextElement.innerHTML = `
+                                          To probe whether VLAs inherit the advanced <b>language generalization</b> abilities of their underlying VLMs, we augment the original SimplerEnv instructions with <b>three</b> types of complex <b>linguistic variations</b>.
+                                          <br>
+                                          <br><b>Language Action:</b> Paraphrase verbs to be compositional and less frequent than in BridgeV2. (e.g., <code>Put {Source} on {Target}</code> &#8594; <code>Pick up {Source} and lay on top of {Target}</code>).
+                                          <br><b>Language Negation:</b> Add negation such as <code>not, don't</code> to irrelevant objects. (e.g., <code>Put {Source} on {Target}</code> &#8594; <code> Put {Source} on {Target}, not {Irrelevant}</code>).
+                                          <br><b>Language Appearance:</b> Replace object with descriptive words. (e.g., <code>Put eggplant on {Target}</code> &#8594; <code>Put the purple object on {Source}</code>).`;
+                  cateImageElement.classList.remove('hidden');
+                  cateImageElement.src = "./static/images/language_complexity.svg";
+                  cateImageElement.style.width  = "20vw";
+                  cateImageElement.style.height = "auto";
+                  // imageElement.alt = "Image 2";
+              } else if (buttonNumber === 3) {
+                  cateTextElement.innerHTML = `
+                                          To be useful in the real world, a generalist policy should be able to operate in <b>visually clustered</b> environments and possess <b>commonsense</b>.
+                                          <br><br>
+                                          SimplerEnv focuses on minimalist scenes with no semantic ambiguity. We therefore add <b> three </b> types of advanced tasks that require visual-language thinking and commonsense.
+                                          <br>
+                                          <br><b>Object Distraction:</b> Introduce objects not relevant to the task.
+                                          <br><b>Commonsense:</b> Modify instructions to require commonsense and reasoning (e.g., <code>Put carrot on {Target}</code> &#8594; <code> Put the vegetable that rabbits like on {Target}</code>).
+                                          <br><b>Commonsense + Object Distraction:</b> Introduce distractor objects that needs commonsense to distinguish (e.g., Introduce an orange object for task <code>Put orange juice on {Target}</code>).`;
+                  cateImageElement.classList.remove('hidden');
+                  cateImageElement.src = "./static/images/object_vision_example.svg";
+                  cateImageElement.style.width  = "62vw";
+                  cateImageElement.style.height = "auto";
+              }
+          }
+        </script>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- Benchmarking Results -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered ">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered">Benchmarking Results</h2>
+        <center>
+          <!-- Here, the changeContent's parameter is just the number of the button. Has no intrinsic association with the content -->
+          <button id="method_button1" class="btn" onclick="changeContent(1)">Intention-Action Gap</button>
+          <button id="method_button2" class="btn" onclick="changeContent(2)">OOD Objects</button>
+          <button id="method_button3" class="btn" onclick="changeContent(3)">Preserving Linguistic Capability</button>
+          <button id="method_button4" class="btn" onclick="changeContent(4)">Preserving Vision-Language Thinking</button>
+
+          <div class="content has-text-justified">
+            <p id="text-content">
+              We found persistent <b>intention-action gaps</b> in all VLAs. While they often recognize what to do when faced with out-of-distribution objects or instructions, potentially helped by the underlying VLM trained on internet-scale data, their execution accruacy drops significantly.
+            </p>
+            <center>
+              <img id="image-content" src="./static/images/radarmap.png" style="width: 62vw;" />
             </center>
           </div>
         </center>
@@ -260,45 +358,44 @@
               document.getElementById('method_button1').classList.remove('active');
               document.getElementById('method_button2').classList.remove('active');
               document.getElementById('method_button3').classList.remove('active');
-
+              document.getElementById('method_button4').classList.remove('active');
               // Add 'active' class to the clicked button so that it will have a different color when its content is present
               document.getElementById('method_button' + buttonNumber).classList.add('active');
 
               if (buttonNumber === 1) {
                   textElement.innerHTML = `
-                                          Truly generalist policies require perceptual ability <b>beyond</b> the object distributions <b>encountered during training or fine-tuning</b>.
-                                          <br><br>
-                                          In SimplerEnv, which assume the fine-tuning dataset is BridgeV2, all manipulation tasks are <code>Put {Source} on {Target}</code>. Therefore, We introduce <b>four</b> categories of <b>out-of-distribution objects</b> that resemble original objects in affordances/grasping difficulty.
-                                          <br>
-                                          <br><b>OOD Source:</b> Source object not present in BridgeV2, but target object is.
-                                          <br><b>OOD Target:</b> Target object not present in BridgeV2, but source object is.
-                                          <br><b>OOD Source + Target:</b> Both source and target objects are not present in BridgeV2.
-                                          <br><b>OOD Relation:</b> Relation between objects is different from the training data. For example, if the training data has <code>Put {Source} on {Target}</code>, then the OOD relation can be <code>Put {Target} on {Source}</code>.`;
+                                          We found persistent <b>intention-action gaps</b> in all VLAs. While they often recognize what to do when faced with out-of-distribution objects or instructions, potentially helped by the underlying VLM trained on internet-scale data, their execution accruacy drops significantly.`;
                   imageElement.classList.remove('hidden');
-                  imageElement.src = "./static/images/Method_1.png";
+                  imageElement.src = "./static/images/radarmap.png";
+                  imageElement.style.width  = "62vw";
+                  imageElement.style.height = "auto";
                   // imageElement.alt = "Image 1";
               } else if (buttonNumber === 2) {
                   textElement.innerHTML = `
-                                          To probe whether VLAs inherit the advanced <b>language generalization</b> abilities of their underlying VLMs, we augment the original SimplerEnv instructions with <b>three</b> types of complex <b>linguistic variations</b>.
+                                          When faced with out-of-distribution objects, VLAs shows <b>robustness with intention</b>: They still knows which item to approach. However, they <b>struggle with execution</b> as the grasping often falls short.
                                           <br>
-                                          <br><b>Language Action:</b> Paraphrase verbs to be compositional and less frequent than in BridgeV2. (e.g., <code>Put {Source} on {Target}</code> &#8594; <code>Pick up {Source} and lay on top of {Target}</code>).
-                                          <br><b>Language Negation:</b> Add negation such as <code>not, don't</code> to irrelevant objects. (e.g., <code>Put {Source} on {Target}</code> &#8594; <code> Put {Source} on {Target}, not {Irrelevant}</code>).
-                                          <br><b>Language Appearance:</b> Replace object with descriptive words. (e.g., <code>Put eggplant on {Target}</code> &#8594; <code>Put the purple object on {Source}</code>).`;
+                                          Interestingly, we noticed that when the source object remains unchanged and the target object is changed to something with similar size and shape, which should not increase task difficulty, the grasp and task success rate can still drop significantly. Our hypothsis is that the end-to-end nature of VLAs may be the reason.`;
                   imageElement.classList.remove('hidden');
-                  imageElement.src = "./static/images/Method_2.png";
+                  imageElement.src = "./static/images/ood_objects.svg";
+                  // imageElement.style.width  = "20vw";
+                  // imageElement.style.height = "auto";
                   // imageElement.alt = "Image 2";
               } else if (buttonNumber === 3) {
                   textElement.innerHTML = `
-                                          To be useful in the real world, a generalist policy should be able to operate in <b>visually clustered</b> environments and possess <b>commonsense</b>.
-                                          <br><br>
-                                          SimplerEnv focuses on minimalist scenes with no semantic ambiguity. We therefore add <b> three </b> types of advanced tasks that require visual-language thinking and commonsense.
-                                          <br>
-                                          <br><b>Object Distraction:</b> Introduce objects not relevant to the task.
-                                          <br><b>Commonsense:</b> Modify instructions to require commonsense and reasoning (e.g., <code>Put carrot on {Target}</code> &#8594; <code> Put the vegetable that rabbits like on {Target}</code>).
-                                          <br><b>Commonsense + Object Distraction:</b> Introduce distractor objects that needs commonsense to distinguish (e.g., Introduce an orange object for task <code>Put orange juice on {Target}</code>).`;
-                  imageElement.classList.add('hidden');
-                                           // imageElement.src = "image3.jpg";
-                  // imageElement.alt = "Image 3";
+                                          While the underlying VLMs shows robustness with language complexity, the VLAs shows <b>significant performance drop</b> when faced with complex language instructions. 
+                                          <br>Magma, which employs joint vision-language co-training, appears to be the most robust, suggesting that its training recipe may help VLAs better preserve the advanced language capability of their underlying VLMs`;
+                  imageElement.classList.remove('hidden');
+                  imageElement.src = "./static/images/language_complexity_result.png";
+                  // imageElement.style.width  = "62vw";
+                  // imageElement.style.height = "auto";
+              } else if (buttonNumber === 4) {
+                  textElement.innerHTML = `
+                                          While the underlying VLMs often exhibit strong vision-language reasoning, we observed that VLAs can <b>struggle</b> with <b>commonsense</b> and <b>visual-language thinking</b>, especially when <b>coupled with distractor objects</b>.
+                                          <br> In the example below, VLAs fail to distinguish between <b>orange juice</b> and <b>orange</b> when both are present, despite the fact that when only one of them is presented it can consistently succeed and the underlying VLM can also easily recognize the difference.`;
+                  imageElement.classList.remove('hidden');
+                  imageElement.src = "./static/images/distract.svg";
+                  // imageElement.style.width  = "62vw";
+                  // imageElement.style.height = "auto";
               }
           }
         </script>
@@ -309,752 +406,6 @@
 </section>
 
 <hr>
-
-<!-- More Visualization -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-full-width">
-        
-        <h2 class="title is-3">More Visualizations</h2>
-        <center>
-          <!-- Here, the argument of the switchSlider function should be the name of the slider block, just without the "_block" part. -->
-          <button class="btn" id="black_9_button" onclick="switchSlider('black_9')">Black Bunny (9 Views)</button>
-          <button class="btn" id="black_5_button" onclick="switchSlider('black_5')">Black Bunny (5 Views)</button>
-          <button class="btn" id="reflective_9_button" onclick="switchSlider('reflective_9')">Reflective Bunny (9 Views)</button>
-          <button class="btn" id="reflective_5_button" onclick="switchSlider('reflective_5')">Reflective Bunny (5 Views)</button>
-          <button class="btn" id="transparent_9_button" onclick="switchSlider('transparent_9')">Transparent Bunny (9 Views)</button>
-          <button class="btn" id="transparent_5_button" onclick="switchSlider('transparent_5')">Transparent Bunny (5 Views)</button>
-          <button class="btn" id="coke_9_button" onclick="switchSlider('coke_9')">Coke Bottle (9 Views)</button>
-          <button class="btn" id="coke_5_button" onclick="switchSlider('coke_5')">Coke Bottle (5 Views)</button>
-          <br>
-          <br>
-        </center>
-
-        <div class="slider-block" id="black_9_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="black_9_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="black_9_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="black_9_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="black_9_normal"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slider-block" id="black_5_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="black_5_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="black_5_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="black_5_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="black_5_normal"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slider-block" id="transparent_9_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="transparent_9_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="transparent_9_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="transparent_9_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="transparent_9_normal"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slider-block" id="transparent_5_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="transparent_5_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="transparent_5_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="transparent_5_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="transparent_5_normal"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slider-block" id="reflective_9_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="reflective_9_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="reflective_9_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="reflective_9_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="reflective_9_normal"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slider-block" id="reflective_5_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="reflective_5_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="reflective_5_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="reflective_5_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="reflective_5_normal"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="slider-block" id="coke_9_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="coke_9_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="coke_9_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="coke_9_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="coke_9_normal"></div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="slider-block" id="coke_5_block">
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (RGB) </h2>
-              <div id="coke_5_rgb"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Ground Truth Comparison (RGB)</h2>
-              <div id="coke_5_gt"></div>
-            </div>
-          </div>
-          <br>
-          <!-- depth and normal sliders -->
-          <div class="sliders-container">
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Depth) </h2>
-              <div id="coke_5_depth"></div>
-            </div>
-            <div class="slider-wrapper">
-              <h2>Novel View Synthesis (Normal)</h2>
-              <div id="coke_5_normal"></div>
-            </div>
-          </div>
-        </div>
-
-        <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css">
-        <script src="./static/js/juxtapose-slider.js"></script> <!-- Include your slider.js file
-         
-        <!-- script for the sliders -->
-        <script>
-          // Slider configurations
-          let slider_dict = {
-            black_9: 
-            [
-              {
-                elementId: '#black_9_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/FS_black_RGB_13.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/DN_black_RGB_13.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // You can reference the options defined in slider.js if needed
-              },
-              {
-                elementId: '#black_9_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/FS_black_RGB_13.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/GT_black_RGB_13.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions // Reference the same or a different options object
-              },
-              {
-                elementId: '#black_9_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/FS_black_depth_13.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/DN_black_depth_13.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // You can reference the options defined in slider.js if needed
-              },
-              {
-                elementId: '#black_9_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/FS_black_normal_13.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/9_view/DN_black_normal_13.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // Reference the same or a different options object
-              }
-            ],
-            black_5: 
-            [
-              {
-                elementId: '#black_5_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/FS_black_RGB_3.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/DN_black_RGB_3.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // You can reference the options defined in slider.js if needed
-              },
-              {
-                elementId: '#black_5_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/FS_black_RGB_2.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/GT_black_RGB_2.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions // Reference the same or a different options object
-              },
-              {
-                elementId: '#black_5_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/FS_black_depth_3.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/DN_black_depth_3.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // You can reference the options defined in slider.js if needed
-              },
-              {
-                elementId: '#black_5_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/FS_black_normal_3.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/black_bunny/5_view/DN_black_normal_3.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // Reference the same or a different options object
-              }
-            ],
-            transparent_9: 
-            [
-              {
-                elementId: '#transparent_9_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/FS_trans_RGB_22.png',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/DN_trans_RGB_22.png',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // You can reference the options defined in slider.js if needed
-              },
-              {
-                elementId: '#transparent_9_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/FS_trans_RGB_22.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/GT_trans_RGB_22.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions // Reference the same or a different options object
-              },
-              {
-                elementId: '#transparent_9_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/FS_trans_depth_0.png',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/DN_trans_depth_0.png',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // You can reference the options defined in slider.js if needed
-              },
-              {
-                elementId: '#transparent_9_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/FS_trans_normal_22.png',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/9_view/DN_trans_normal_22.png',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions // Reference the same or a different options object
-              }
-            ],
-            transparent_5: 
-            [
-              {
-                elementId: '#transparent_5_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/FS_trans_RGB_22.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/DN_trans_RGB_22.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#transparent_5_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/FS_trans_RGB_22.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/GT_trans_RGB_22.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#transparent_5_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/FS_trans_depth_22.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/DN_trans_depth_22.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#transparent_5_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/FS_trans_normal_22.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/transparent_bunny/5_view/DN_trans_normal_22.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              }
-            ],
-            reflective_9: 
-            [
-              {
-                elementId: '#reflective_9_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/FS_reflective_RGB_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/DN_reflective_RGB_8.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#reflective_9_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/FS_reflective_RGB_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/GT_reflective_RGB_8.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#reflective_9_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/FS_reflective_depth_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/DN_reflective_depth_8.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#reflective_9_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/FS_reflective_normal_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/9_view/DN_reflective_normal_8.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              }
-            ],
-            reflective_5: 
-            [
-              {
-                elementId: '#reflective_5_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/FS_reflective_RGB_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/DN_reflective_RGB_8.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#reflective_5_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/FS_reflective_RGB_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/GT_reflective_RGB_8.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#reflective_5_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/FS_reflective_depth_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/DN_reflective_depth_8.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#reflective_5_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/FS_reflective_normal_8.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/reflective_bunny/5_view/DN_reflective_normal_8.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              }
-            ],
-            coke_9: 
-            [
-              {
-                elementId: '#coke_9_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/9_view/FS_coke_RGB_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/9_view/DN_coke_RGB_1.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#coke_9_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/9_view/FS_coke_RGB_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/9_view/GT_coke_RGB_1.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#coke_9_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/9_view/FS_coke_depth_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/9_view/DN_coke_depth_1.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#coke_9_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/9_view/FS_coke_normal_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/9_view/DN_coke_normal_1.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              }
-            ],
-            coke_5: 
-            [
-              {
-                elementId: '#coke_5_rgb',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/5_view/FS_coke_RGB_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/5_view/DN_coke_RGB_1.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#coke_5_gt',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/5_view/FS_coke_RGB_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/5_view/GT_coke_RGB_1.png',
-                    label: 'Ground Truth',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#coke_5_depth',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/5_view/FS_coke_depth_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/5_view/DN_coke_depth_1.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              },
-              {
-                elementId: '#coke_5_normal',
-                images: [
-                  {
-                    src: './static/images/sliders/coke/5_view/FS_coke_normal_1.jpg',
-                    label: 'FusionSense',
-                  },
-                  {
-                    src: './static/images/sliders/coke/5_view/DN_coke_normal_1.jpg',
-                    label: 'DN-Splatter',
-                  }
-                ],
-                options: sliderOptions
-              }
-            ]
-          };
-          
-          // Show black_9_block by default
-          document.addEventListener('DOMContentLoaded', () => {
-            switchSlider('black_9'); 
-          });
-
-          // Function to show the specific div based on button click
-          function switchSlider(block_id) {
-              // Remove 'active' class from all buttons to reset color
-              document.getElementById('black_9_button').classList.remove('active');
-              document.getElementById('black_5_button').classList.remove('active');
-              document.getElementById('reflective_9_button').classList.remove('active');
-              document.getElementById('reflective_5_button').classList.remove('active');
-              document.getElementById('transparent_9_button').classList.remove('active');
-              document.getElementById('transparent_5_button').classList.remove('active');
-              document.getElementById('coke_9_button').classList.remove('active');
-              document.getElementById('coke_5_button').classList.remove('active');
-
-              // Add 'active' class to the clicked button so that it will have a different color when its content is present
-              document.getElementById(block_id+'_button').classList.add('active');
-
-              // Select all content divs and hide them
-              contentDivs = document.querySelectorAll('.slider-block');
-              contentDivs.forEach(div => {
-                  div.classList.remove('show'); // Hide all divs
-              });
-  
-              // Show the selected div with a fade effect
-              selectedDiv = document.getElementById(block_id+'_block');
-              selectedDiv.classList.add('show');
-
-              if (!selectedDiv.initialized) {
-                initializeSliders(slider_dict[block_id]);
-                selectedDiv.initialized = true;
-              }
-          }
-
-        </script>
-      </div>
-    </div>
-  </div>
-</section>
-
 
 <!-- BibTeX -->
 <section class="section" id="BibTeX"> 
@@ -1077,7 +428,7 @@ Coming Soon
 <section class="section" id="Acknowledgements">
   <div class="container is-max-desktop content">
     <h2 class="title">Acknowledgements</h2>
-    Jing Zhang and Chen Feng are the corresponding authors. The work was supported in part through NSF grants 2024882, 2152565, and 2238968.
+    Chen Feng is the corresponding authors.
   </div>
 </section>
           
