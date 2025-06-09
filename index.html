@@ -341,7 +341,7 @@
 
           <div class="content has-text-justified">
             <p id="text-content">
-              We found persistent <b>intention-action gaps</b> in all VLAs. While they often recognize what to do when faced with out-of-distribution objects or instructions, potentially helped by the underlying VLM trained on internet-scale data, their execution accruacy drops significantly.
+              All VLAs exhibit persistent <b>intention-action gaps</b>. They correctly interpret out-of-distribution objects or instructions, thanks to their pretrained VLM, but their execution accuracy still falls sharply.
             </p>
             <center>
               <img id="image-content" src="./static/images/radarmap.png" style="width: 62vw;" />
@@ -364,7 +364,7 @@
 
               if (buttonNumber === 1) {
                   textElement.innerHTML = `
-                                          We found persistent <b>intention-action gaps</b> in all VLAs. While they often recognize what to do when faced with out-of-distribution objects or instructions, potentially helped by the underlying VLM trained on internet-scale data, their execution accruacy drops significantly.`;
+                                          All VLAs exhibit persistent <b>intention-action gaps</b>. They correctly interpret out-of-distribution objects or instructions, thanks to their pretrained VLM, but their execution accuracy still falls sharply.`;
                   imageElement.classList.remove('hidden');
                   imageElement.src = "./static/images/radarmap.png";
                   imageElement.style.width  = "62vw";
@@ -373,8 +373,8 @@
               } else if (buttonNumber === 2) {
                   textElement.innerHTML = `
                                           When faced with out-of-distribution objects, VLAs shows <b>robustness with intention</b>: They still knows which item to approach. However, they <b>struggle with execution</b> as the grasping often falls short.
-                                          <br>
-                                          Interestingly, we noticed that when the source object remains unchanged and the target object is changed to something with similar size and shape, which should not increase task difficulty, the grasp and task success rate can still drop significantly. Our hypothsis is that the end-to-end nature of VLAs may be the reason.`;
+                                          <br><br>
+                                          Interestingly, even when the source is unchanged and the target is swapped for one of similar size and shape, which shouldn't raise difficulty, the grasp and task success rate can still fall sharply. We hypothesize this stems from the end-to-end nature of VLAs.`;
                   imageElement.classList.remove('hidden');
                   imageElement.src = "./static/images/ood_objects.svg";
                   // imageElement.style.width  = "20vw";
@@ -382,16 +382,18 @@
                   // imageElement.alt = "Image 2";
               } else if (buttonNumber === 3) {
                   textElement.innerHTML = `
-                                          While the underlying VLMs shows robustness with language complexity, the VLAs shows <b>significant performance drop</b> when faced with complex language instructions. 
-                                          <br>Magma, which employs joint vision-language co-training, appears to be the most robust, suggesting that its training recipe may help VLAs better preserve the advanced language capability of their underlying VLMs`;
+                                          VLAs suffer a <b>significant performance drop</b> on complex language instructions, even though their underlying VLMs handle such complexity well. 
+                                          <br><br>
+                                          Magma, using joint vision-language co-training, appears relatively robust, suggesting this approach helps VLAs retain their VLM's advanced linguistic capabilities.`;
                   imageElement.classList.remove('hidden');
                   imageElement.src = "./static/images/language_complexity_result.png";
                   // imageElement.style.width  = "62vw";
                   // imageElement.style.height = "auto";
               } else if (buttonNumber === 4) {
                   textElement.innerHTML = `
-                                          While the underlying VLMs often exhibit strong vision-language reasoning, we observed that VLAs can <b>struggle</b> with <b>commonsense</b> and <b>visual-language thinking</b>, especially when <b>coupled with distractor objects</b>.
-                                          <br> In the example below, VLAs fail to distinguish between <b>orange juice</b> and <b>orange</b> when both are present, despite the fact that when only one of them is presented it can consistently succeed and the underlying VLM can also easily recognize the difference.`;
+                                          Although the underlying VLMs often demonstrate strong vision-language reasoning, we observed that VLAs <b>struggle</b> with <b>commonsense</b> and <b>visual-language thinking</b>, especially in the presence of <b>distractor objects</b>.<br>
+                                          <br>
+                                          For example, when both <b>orange juice</b> and <b>orange</b> appear together, VLAs frequently confuse them, even though they succeed reliably when only one is present and the underlying VLM can easily tell them apart.`;
                   imageElement.classList.remove('hidden');
                   imageElement.src = "./static/images/distract.svg";
                   // imageElement.style.width  = "62vw";
