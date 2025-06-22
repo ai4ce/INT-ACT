@@ -257,7 +257,7 @@
               <br><b>OOD Relation:</b> Relation between objects is different from the training data. For example, if the training data has <code>Put {Source} on {Target}</code>, then the OOD relation can be <code>Put {Target} on {Source}</code>.
             </p>
             <center>
-              <img id="cate-image-content" src="./static/images/object_vision_example.svg" style="width: 62vw;" />
+              <img id="cate-image-content" src="./static/images/ood_objects_example.gif" style="width: 62vw;" />
             </center>
           </div>
         </center>
@@ -286,7 +286,7 @@
                                           <br><b>OOD Source + Target:</b> Both source and target objects are not present in BridgeV2.
                                           <br><b>OOD Relation:</b> Relation between objects is different from the training data. For example, if the training data has <code>Put {Source} on {Target}</code>, then the OOD relation can be <code>Put {Target} on {Source}</code>.`;
                   cateImageElement.classList.remove('hidden');
-                  cateImageElement.src = "./static/images/object_vision_example.svg";
+                  cateImageElement.src = "./static/images/ood_objects_example.gif";
                   cateImageElement.style.width  = "62vw";
                   cateImageElement.style.height = "auto";
                   // imageElement.alt = "Image 1";
@@ -312,7 +312,7 @@
                                           <br><b>Commonsense:</b> Modify instructions to require commonsense and reasoning (e.g., <code>Put carrot on {Target}</code> &#8594; <code> Put the vegetable that rabbits like on {Target}</code>).
                                           <br><b>Commonsense + Object Distraction:</b> Introduce distractor objects that needs commonsense to distinguish (e.g., Introduce an orange object for task <code>Put orange juice on {Target}</code>).`;
                   cateImageElement.classList.remove('hidden');
-                  cateImageElement.src = "./static/images/object_vision_example.svg";
+                  cateImageElement.src = "./static/images/visual_thinking.gif";
                   cateImageElement.style.width  = "62vw";
                   cateImageElement.style.height = "auto";
               }
