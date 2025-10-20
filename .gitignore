@@ -5,8 +5,9 @@ hf-models/
 uv.lock
 .vscode/
 *.csv
-cpu_activate_singularity.sh
-gpu_activate_singularity.sh
+
+# Dataset. This doesn't not ignore all the other folder named 'data'
+/data/
 
 *.mp4
 *.png
@@ -163,9 +164,8 @@ dmypy.json
 # Mac OS
 .DS_Store
 
-# Caches and Datasets
+# Caches
 cache/
-# data/
 
 # Rollout videos and wandb logs
 rollouts/

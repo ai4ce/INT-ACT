@@ -31,13 +31,19 @@ This is the official implementation of [From Intention to Execution: Probing the
 - [x] Release all relevant model checkpoints on HF
 
 ## Installation
-Install this codebase by first cloning it.
-```
-git clone --recurse-submodules https://github.com/ai4ce/INT-ACT.git
-cd INT-ACT
-```
 > [!IMPORTANT]
 > See the [How to Set ENV Variables](#how-to-set-env-variables) section for setting up the environment variables.
+
+Install this codebase by first cloning it.
+```bash
+git clone --recurse-submodules https://github.com/ai4ce/INT-ACT.git
+```
+```bash
+cd INT-ACT
+```
+> [!WARNING]
+> It is imperative to use `--recurse-submodules` to clone this repository, as it contains several submodules that are required for the code to function properly (e.g., our fork of LeRobot, which we are working to get rid of at the moment so we can work with official LeRobot wheels).
+
 
 > [!NOTE]
 > This codebase relies on [uv](https://docs.astral.sh/uv/) to manage the virtual environments. It's not strictly required, but the authors can only provide support for this environment management system.
@@ -97,7 +103,7 @@ uv pip install -r pyproject.toml
 ```
 
 ## Acquire Data for Training/Fine-tuning
-For now, we refer you to Allen Ren's [README](https://github.com/allenzren/open-pi-zero)
+For now, we refer you to Allen Ren's [README](https://github.com/allenzren/open-pi-zero?tab=readme-ov-file#download-data) to acquire and preprocess the BridgeV2 dataset. You can also refer to [our data preprocessing script](slurms/dataset_scripts/resize_jpeg.sh).
 
 ## Acquire Checkpoints for Evaluation
 We released our trained Pi0 variants on Huggingface. You can find them under the [INTACT collection](https://huggingface.co/collections/ai4ce/intact-probing-suite-684e5601e9ed640fdd9b994b). Specifically, they are:
