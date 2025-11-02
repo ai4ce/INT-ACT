@@ -13,7 +13,7 @@ authors = [
 requires-python = ">=3.10, <3.13"
 
 dependencies = [
-    "lerobot",
+    "lerobot==0.4.0",
     "transformers==4.49.0",
     "opencv-python>=4.11.0",
     "pytest",
@@ -42,7 +42,6 @@ ignore = ["F722"]
 
 [tool.uv.sources]
 policy-server-client = { path = "../../../../packages/policy-server-client", editable = true }
-lerobot = { path = "../../../../third_party/lerobot", editable = true }
 
 [tool.uv]
 no-build-isolation-package = ['flash-attn']

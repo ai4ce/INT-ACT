@@ -7,8 +7,7 @@ import os
 import sys
 
 import draccus
-from lerobot.common.policies.pi0.modeling_pi0 import PI0Policy
-from lerobot.common.policies.pi0fast.modeling_pi0fast import PI0FASTPolicy
+from lerobot.policies.pi0.modeling_pi0 import PI0Policy
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 from policy_server_client.websocket_policy_server import WebsocketPolicyServer

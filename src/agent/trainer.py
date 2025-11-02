@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from abc import abstractmethod
 from collections import deque
 from contextlib import nullcontext
 from copy import deepcopy
@@ -17,25 +18,16 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 
 import einops
 import torch.distributed as dist
+import wandb
 from lerobot.common.policies.pretrained import PreTrainedPolicy
-from torch.distributed.fsdp import (
-    FullStateDictConfig,
-    StateDictType,
-)
-
-# TODO: need a better implementation of this importing. As it is not always needed and should not enable every time.
-from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.nn.parallel import DistributedDataParallel as DDP
 
-import wandb
 from src.agent.configuration_pipeline import TrainPipelineConfig
 from src.agent.dataset import TorchRLDSInterleavedDataset
 from src.utils.metric import get_action_accuracy
 from src.utils.monitor import Timer, blockprint, log_allocated_gpu_memory, log_execution_time, setup_logger
 from src.utils.optim import CosineAnnealingWarmupRestarts, get_num_params_in_billions
 from src.utils.pipeline import process_images, set_seed_everywhere
-
-full_state_save_policy = FullStateDictConfig(offload_to_cpu=True, rank0_only=True)
 
 os.environ["WANDB__SERVICE_WAIT"] = "300"
 
@@ -107,6 +99,7 @@ class BaseTrainer:
 
         #
         if self.model_class.name == "pi0":
+            self._prepare_pi0_model()
             self.model.model.paligemma_with_expert.gemma_expert.lm_head = None # remove action expert lm head
             if train_cfg.freeze_lm_head:
                 self.log.info("Freezing lm head")
@@ -122,18 +115,10 @@ class BaseTrainer:
                 for param in self.model.model.paligemma_with_expert.paligemma.language_model.model.parameters():
                     param.requires_grad = False
 
-        if self.multi_gpu and self.multi_gpu_mechanism == "fsdp":
-            from torch.distributed.fsdp import MixedPrecision
-            fsdp_mp_config = MixedPrecision(
-                param_dtype = torch.bfloat16,
-                reduce_dtype = torch.bfloat16,
-                buffer_dtype = torch.bfloat16,
-            )
-        else:
-            if not hasattr(self.model_cfg, "precision"):
-                # we only manually convert model dtype if no such precision is specified in model config
-                # because models usually have special ways to handle dtype, so whole model conversion is too rough
-                self.model.to(self.dtype)
+        if not hasattr(self.model_cfg, "precision"):
+            # we only manually convert model dtype if no such precision is specified in model config
+            # because models usually have special ways to handle dtype, so whole model conversion is too rough
+            self.model.to(self.dtype)
         self.model.to(self.device)
         if train_cfg.use_torch_compile:
             self.model = torch.compile(self.model,
@@ -153,13 +138,6 @@ class BaseTrainer:
                     static_graph=False,
                     find_unused_parameters=False if train_cfg.freeze_lm_head else True,
                 )
-                dist.barrier()
-            elif self.multi_gpu_mechanism == "fsdp":
-
-                self.model = FSDP(self.model,
-                                  use_orig_params=True,
-                                  mixed_precision = fsdp_mp_config,
-                                  )
                 dist.barrier()
             else:
                 raise NotImplementedError("Please specify a supported parallel mechanism.")
@@ -363,13 +341,6 @@ class BaseTrainer:
                             [self.model.module.select_action(inputs) for _ in range(self.action_horizon)],
                             dim=1
                         )
-                    elif self.multi_gpu and self.multi_gpu_mechanism == "fsdp":
-                        # summon all parameters for the custom function call, avoid sharding/unsharding
-                        with FSDP.summon_full_params(self.model):
-                            pred_actions = torch.stack(
-                                [self.model.select_action(inputs) for _ in range(self.action_horizon)],
-                                dim=1
-                            )
                     else:
                         pred_actions = torch.stack(
                             [self.model.select_action(inputs) for _ in range(self.action_horizon)],
@@ -593,93 +564,32 @@ class BaseTrainer:
             self.model = self._load_model(model_class=model_class, checkpoint_dir=train_cfg.load_from_checkpoint)
             self.log.info(f"Loaded checkpoint from {train_cfg.load_from_checkpoint}.")
 
+    @abstractmethod
+    def _prepare_pi0_model(self):
+        pass
+
     @log_execution_time()
     def _save_training(self):
-        if self.multi_gpu_mechanism == "fsdp": # rank is checked inside the functions
-            # save the model
-            self._save_fsdp_model()
-            # save the optimzer and other data, separating the function to potentially save the CPU memory
-            # ! Not saving the optimizer, because lack of support for low bit optimizer.
-            # self._save_fsdp_optim()
-        else:
-            # normal, non-fsdp, saving
-            if self.main_rank:
-                model_save_path = self.checkpoint_dir / f"step_{self.cnt_update}"
-                data_save_path = model_save_path / "auxiliary_data.pt"
-
-                # In HF, model_save_path is a path to a folder, which contains a .safetensors file
-                if self.multi_gpu and self.multi_gpu_mechanism == "ddp":
-                    self.model.module.save_pretrained(model_save_path)
-                else:
-                    self.model.save_pretrained(model_save_path)
-
-                data = {
-                    "cnt_update": self.cnt_update,
-                    "cnt_batch": self.cnt_batch,
-                    "optimizer": self.optimizer.state_dict(),
-                    "lr_scheduler": self.lr_scheduler.state_dict(),
-                    "wandb_id": wandb.run.id,
-                }
-                torch.save(data, data_save_path)
-                checkpoint_size_in_gb = os.path.getsize(model_save_path / "model.safetensors") / (1024**3)
-                self.log.info(f"Saved model to {model_save_path}, size: {checkpoint_size_in_gb:.3f} GB")
-
-    # for FSDP
-    def _save_fsdp_model(self,):
-            # model
-            with FSDP.state_dict_type(
-                self.model, StateDictType.FULL_STATE_DICT, full_state_save_policy
-            ):
-                cpu_state = self.model.state_dict()
-            if self.main_rank:
-                model_save_path = self.checkpoint_dir / f"step_{self.cnt_update}"
-
-                # In HF, model_save_path is a path to a folder, which contains a .safetensors file
-                # ? NOTE (juexiao): this implementation will have to reinitialize a model to complie with the save_model api in save tensors
-                # ? kind of ugly and inefficient but this makes best use of standards. Is there a better way?
-                temp_model_config = deepcopy(self.model_cfg)
-                temp_model_config.paligemma_pretrained_path = None # make sure no unnecessary load, just a clean temp model for saving purpose
-                temp_model_to_save = self.model_class(config=temp_model_config, dataset_stats=self.train_cfg.data.dataset_stats)
-                temp_model_to_save.resize_token_embedding()
-                temp_model_to_save.register_special_tokens()
-                # handles potential key mismatches between the model and the state dict
-                temp_state_dict = temp_model_to_save.state_dict()
-                # clean up the potential prefixes in the FSDP full state dict
-                cleaned_state_dict = {}
-                for fsdp_key, fsdp_value in cpu_state.items():
-                    clean_key = fsdp_key.replace("_orig_mod.", "")
-                    if clean_key in temp_state_dict:
-                        cleaned_state_dict[clean_key] = fsdp_value
-                    else:
-                        self.log.warning(f"**FSDP** saving issue: Key {fsdp_key} from FSDP model not found in rebular model")
-                # then load the cleaned state dict
-                temp_model_to_save.load_state_dict(cleaned_state_dict, strict=False)
-                # temp_model_to_save.load_state_dict(cpu_state)
-                temp_model_to_save.save_pretrained(model_save_path)
-
-                checkpoint_size_in_gb = os.path.getsize(model_save_path / "model.safetensors") / (1024**3)
-                self.log.info(f"Saved model to {model_save_path}, size: {checkpoint_size_in_gb:.3f} GB")
-
-    def _save_fsdp_optim(self,):
-        # ! this logic is working with full precision optimizer, but NOT for low bits. Therefore current implementation does NOT save the optimizer states.
-        # ! left for future suppport.
-        with FSDP.state_dict_type(
-            self.model, StateDictType.FULL_STATE_DICT, full_state_save_policy
-        ):
-            optim_state = FSDP.optim_state_dict(self.model, self.optimizer)
-
         if self.main_rank:
             model_save_path = self.checkpoint_dir / f"step_{self.cnt_update}"
             data_save_path = model_save_path / "auxiliary_data.pt"
 
+            # In HF, model_save_path is a path to a folder, which contains a .safetensors file
+            if self.multi_gpu and self.multi_gpu_mechanism == "ddp":
+                self.model.module.save_pretrained(model_save_path)
+            else:
+                self.model.save_pretrained(model_save_path)
+
             data = {
-                    "cnt_update": self.cnt_update,
-                    "cnt_batch": self.cnt_batch,
-                    "optimizer": optim_state,
-                    "lr_scheduler": self.lr_scheduler.state_dict(),
-                    "wandb_id": wandb.run.id,
-                }
+                "cnt_update": self.cnt_update,
+                "cnt_batch": self.cnt_batch,
+                "optimizer": self.optimizer.state_dict(),
+                "lr_scheduler": self.lr_scheduler.state_dict(),
+                "wandb_id": wandb.run.id,
+            }
             torch.save(data, data_save_path)
+            checkpoint_size_in_gb = os.path.getsize(model_save_path / "model.safetensors") / (1024**3)
+            self.log.info(f"Saved model to {model_save_path}, size: {checkpoint_size_in_gb:.3f} GB")
 
     @log_execution_time()
     def _load_model(self,
@@ -725,6 +635,17 @@ class PI0Trainer(BaseTrainer):
                  train_cfg: TrainPipelineConfig,
                  model_class: PreTrainedPolicy):
         super().__init__(train_cfg, model_class)
+
+    def _prepare_pi0_model(self):
+        from transformers.models.gemma.modeling_gemma import GemmaForCausalLM
+        # Randomize the action expert
+        old = self.model.model.paligemma_with_expert.gemma_expert
+        cfg = old.config
+
+        new_expert = GemmaForCausalLM(config=cfg)  # random init
+        new_expert.model.embed_tokens = None       # match current setup
+
+        self.model.model.paligemma_with_expert.gemma_expert = new_expert
 
 class PI0FASTTrainer(BaseTrainer):
     def __init__(self,

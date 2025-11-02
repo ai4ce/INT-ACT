@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "lerobot",
+    "lerobot==0.4.0",
     "draccus",
     "policy-server-client",
     "simpler-env",
@@ -23,4 +23,3 @@ dlimp = {git = "https://github.com/kvablack/dlimp", rev = "d08da3852c149548aaa85
 simpler-env = { path = "../../../../third_party/SimplerEnv", editable = true }
 mani-skill2-real2sim = { path = "../../../../third_party/ManiSkill2_real2sim", editable = true }
 policy-server-client = { path = "../../../../packages/policy-server-client", editable = true }
-lerobot = { path = "../../../../third_party/lerobot", editable = true }
